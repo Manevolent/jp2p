@@ -7,6 +7,97 @@
     <groupId>com.manevolent</groupId>
     <artifactId>jp2p</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
+    <name>Java P2P Extensions</name>
+    <description>A flexible decentralized protocol stack implemented in Java.</description>
+    <url>https://github.com/Manevolent/jp2p</url>
 
+    <developers>
+        <developer>
+            <id>Manevolent</id>
+            <url>https://github.com/Manevolent</url>
+            <email>manevolent@teamlixo.net</email>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>GNU General Public License, version 2</name>
+            <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html</url>
+            <distribution>LICENSE</distribution>
+        </license>
+    </licenses>
+    <repositories>
+        <repository>
+            <id>master</id>
+            <name>GitHub</name>
+            <url>https://github.com/Manevolent/jp2p</url>
+        </repository>
+    </repositories>
+    <scm>
+        <url>https://github.com/Manevolent/jp2p</url>
+        <connection>https://github.com/Manevolent/jp2p.git</connection>
+    </scm>
+
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <goal>compile</goal>
+
+                    <verbose>true</verbose>
+                    <fork>true</fork>
+                    <optimize>true</optimize>
+
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <goal>package</goal>
+
+                    <outputDirectory>build/</outputDirectory>
+                    <archive>
+                        <index>true</index>
+                        <manifestEntries>
+                            <mode>development</mode>
+
+                            <name>${project.name}</name>
+                            <url>${project.url}</url>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.barchart.udt</groupId>
+            <artifactId>barchart-udt-bundle</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.turn</groupId>
+            <artifactId>ttorrent</artifactId>
+            <version>1.4</version>
+        </dependency>
+    </dependencies>
 </project>
