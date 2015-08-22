@@ -57,14 +57,14 @@ public class ImageSerializer implements DataSerializer<RenderedImage> {
 Along with extensible protocols and serialization, JP2P features a few of basic protocol helpers that keep datagrams sequenced, and also keep media streams (VoIP, video, etc.) timed properly. Combining these two mechanisms makes a jitter-free audio stream and/or a reliable video livestream, even on UDP-based connections with high varying latency.
 
 ```java
-        Sequencer<AudioFrame> sequencer = new Sequencer<AudioFrame>(10000);
-        sequencer.put(0, new AudioFrame());
-        sequencer.put(2, new AudioFrame());
-        sequencer.put(1, new AudioFrame());
-        sequencer.put(3, new AudioFrame());
-        
-        // Read the sequences in order: 0, 1, 2, 3...
-        while (sequencer.ready()) sequencer.next();
+Sequencer<AudioFrame> sequencer = new Sequencer<AudioFrame>(10000);
+sequencer.put(0, new AudioFrame());
+sequencer.put(2, new AudioFrame());
+sequencer.put(1, new AudioFrame());
+sequencer.put(3, new AudioFrame());
+    
+// Read the sequences in order: 0, 1, 2, 3...
+while (sequencer.ready()) sequencer.next();
 ```
 
 ```java
