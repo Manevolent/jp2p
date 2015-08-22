@@ -6,9 +6,7 @@ import com.manevolent.jp2p.endpoint.Endpoint;
 import com.manevolent.jp2p.extensible.endpoint.IpEndpoint;
 import com.manevolent.jp2p.extensible.stream.PositiveInputStream;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -27,7 +25,7 @@ public final class NativeSocketClient extends NetworkClient {
         this.socket = socket;
         this.blocking = blocking;
         this.inputStream = new PositiveInputStream(socket.getInputStream(), socket.getSoTimeout());
-        this.outputStream = socket.getOutputStream();
+        this.outputStream = new BufferedOutputStream(socket.getOutputStream());
     }
 
     public InputStream getNativeInputStream() throws IOException {

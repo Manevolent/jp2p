@@ -21,11 +21,9 @@ public class BoundPacket extends Packet {
         else
             return this.properties.put(key, value);
     }
-
     public <T> T getProperty(String key, Class<T> type) {
         return (T) this.properties.get(key);
     }
-
     public Object getProperty(String key) {
         return this.properties.get(key);
     }
@@ -38,13 +36,8 @@ public class BoundPacket extends Packet {
             String key = dataInputStream.readUTF();
             String className = dataInputStream.readUTF();
 
-            try {
-                Class type = ClassLoader.getSystemClassLoader().loadClass(className);
-                if (properties.put(key, serializer.get(type).read(dataInputStream)) != null)
-                    throw new IOException("Duplicate bound property: " + key);
-            } catch (ClassNotFoundException e) {
-                throw new IOException(e);
-            }
+            if (properties.put(key, serializer.get(className).read(dataInputStream)) != null)
+                throw new IOException("Duplicate bound property: " + key);
         }
     }
 

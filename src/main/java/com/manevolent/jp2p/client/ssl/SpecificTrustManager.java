@@ -1,4 +1,4 @@
-package com.manevolent.jp2p.extensible;
+package com.manevolent.jp2p.client.ssl;
 
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;

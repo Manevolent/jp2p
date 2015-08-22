@@ -1,4 +1,4 @@
-package com.manevolent.jp2p.extensible;
+package com.manevolent.jp2p.client.ssl;
 
 import com.manevolent.jp2p.client.NetworkClient;
 import com.manevolent.jp2p.extensible.socket.client.NativeSocketClient;
@@ -22,13 +22,9 @@ import java.util.Date;
  */
 public final class SSL {
 
-    /**
-     * Creates an SSL client socket factory using the specified trust manager.
-     * @return SSLSocketFactory instance.
-     */
-    public static SSLSocketFactory createFactory(X509Certificate certificate)
-            throws NoSuchAlgorithmException, KeyManagementException,
-            KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+    public static SSLContext createClientContext(X509Certificate certificate)
+            throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException,
+            UnrecoverableKeyException, KeyManagementException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
         keyStore.setCertificateEntry("server", certificate);
@@ -41,21 +37,17 @@ public final class SSL {
                 kmf.getKeyManagers(),
                 new TrustManager[] { new SpecificTrustManager(new X509Certificate[] { certificate }) },
                 new SecureRandom()
-        )
-        ;
-        return context.getSocketFactory();
+        );
+
+        return context;
     }
 
-    /**
-     * Creates an SSL server socket factory using the specified trust manager.
-     * @param trustManagers Trust managers to use when creating the SSL socket factory.
-     * @return SSLServerSocketFactory instance.
-     */
-    public static final SSLServerSocketFactory createServerFactory(
+    public static SSLContext createServerContext(
             TrustManager[] trustManagers,
             Certificate certificate,
-            PrivateKey key)
-            throws GeneralSecurityException, IOException {
+            PrivateKey key
+    ) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException,
+            UnrecoverableKeyException, KeyManagementException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
         keyStore.setKeyEntry("server", key, "intlPassword".toCharArray(), new Certificate[]{certificate});
@@ -69,7 +61,31 @@ public final class SSL {
                 trustManagers,
                 new SecureRandom()
         );
-        return context.getServerSocketFactory();
+
+        return context;
+    }
+
+    /**
+     * Creates an SSL client socket factory using the specified trust manager.
+     * @return SSLSocketFactory instance.
+     */
+    public static SSLSocketFactory createFactory(X509Certificate certificate)
+            throws NoSuchAlgorithmException, KeyManagementException,
+            KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+        return createClientContext(certificate).getSocketFactory();
+    }
+
+    /**
+     * Creates an SSL server socket factory using the specified trust manager.
+     * @param trustManagers Trust managers to use when creating the SSL socket factory.
+     * @return SSLServerSocketFactory instance.
+     */
+    public static final SSLServerSocketFactory createServerFactory(
+            TrustManager[] trustManagers,
+            Certificate certificate,
+            PrivateKey key)
+            throws GeneralSecurityException, IOException {
+        return createServerContext(trustManagers, certificate, key).getServerSocketFactory();
     }
 
     /**
@@ -165,5 +181,28 @@ public final class SSL {
         cert.sign(privkey, algorithm);
 
         return cert;
+    }
+
+    public static NetworkClient wrapClient(NetworkClient base, X509Certificate certificate)
+            throws CertificateException, UnrecoverableKeyException,
+            NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+        SSLEngine engine = createClientContext(certificate).createSSLEngine();
+        engine.setUseClientMode(true);
+        return new SSLNetworkClient(base, engine);
+    }
+
+    public static NetworkClient wrapServer(NetworkClient base,
+                                           TrustManager[] trustManagers,
+                                           Certificate certificate,
+                                           PrivateKey key,
+                                           boolean clientAuthentication)
+            throws CertificateException, UnrecoverableKeyException,
+            NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+        SSLEngine engine = createServerContext(trustManagers, certificate, key).createSSLEngine();
+        engine.setUseClientMode(false);
+        engine.setWantClientAuth(clientAuthentication);
+        engine.setNeedClientAuth(clientAuthentication);
+
+        return new SSLNetworkClient(base, engine);
     }
 }

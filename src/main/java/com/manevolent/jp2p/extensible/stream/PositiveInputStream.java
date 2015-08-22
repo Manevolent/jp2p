@@ -17,6 +17,11 @@ public class PositiveInputStream extends InputStream {
     }
 
     @Override
+    public int available() throws IOException {
+        return baseStream.available();
+    }
+
+    @Override
     public int read() throws IOException {
         long start = System.currentTimeMillis();
 

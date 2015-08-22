@@ -7,8 +7,8 @@ import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 
 public class ByteBufferInputStream extends InputStream {
+    private final ByteBuffer buf;
     private volatile int length;
-    private volatile ByteBuffer buf;
 
     public ByteBufferInputStream(ByteBuffer buf) {
         this.buf = buf;
@@ -117,6 +117,14 @@ public class ByteBufferInputStream extends InputStream {
                 //Clear the position so all pushed data can be read.
                 buf.clear();
             }
+        }
+    }
+
+    public byte[] flushToArray() throws IOException {
+        synchronized (buf) {
+            byte[] bytes = new byte[available()];
+            read(bytes);
+            return bytes;
         }
     }
 }

@@ -34,7 +34,10 @@ public class ByteBufferOutputStream extends OutputStream {
     @Override
     public void write(byte[] bytes, int off, int len) throws IOException {
         synchronized (buf) {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+            byte[] cpy = new byte[len];
+            System.arraycopy(bytes, off, cpy, 0, len);
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(cpy);
             inputStream.skip(off); //Skip to the offset.
 
             for (;;) {

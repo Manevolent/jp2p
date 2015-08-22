@@ -115,6 +115,7 @@ public class Serializer {
 
     private final Serializer parent;
     private final Map<Class, DataSerializer> serializerMap = new HashMap<>();
+    private final Map<String, Class> serializerTypeMap = new HashMap<>();
 
     protected Serializer(Serializer parent) {
         this.parent = parent;
@@ -125,7 +126,16 @@ public class Serializer {
     }
 
     public void put(Class type, DataSerializer serializer) {
+        if (type.isAnonymousClass())
+            throw new IllegalArgumentException("Cannot register anonymous class");
+
         this.serializerMap.put(type, serializer);
+        this.serializerTypeMap.put(type.getName(), type);
+    }
+
+    public DataSerializer remove(Class type) {
+        this.serializerTypeMap.remove(type.getName());
+        return this.serializerMap.remove(type);
     }
 
     public DataSerializer get(Class type) {
@@ -133,6 +143,15 @@ public class Serializer {
         if (serializer == null) {
             if (parent != null) return parent.get(type);
             else throw new IllegalArgumentException("Unknown class type: " + type.toString());
+        } else return serializer;
+    }
+
+    public DataSerializer get(String typeName) {
+        Class type = serializerTypeMap.get(typeName);
+        DataSerializer serializer = type != null ? serializerMap.get(type) : null;
+        if (serializer == null) {
+            if (parent != null) return parent.get(typeName);
+            else throw new IllegalArgumentException("Unknown class type: " + typeName);
         } else return serializer;
     }
 }
