@@ -113,3 +113,17 @@ public class CustomPacketHandler extends PacketHandler<BoundPacket> {
     }
 }
 ```
+
+### SSL
+
+JP2P supports TLS/SSL communications by extending the SSLEngine class into a wrapper that is API-compatible. You can use the SSLNetworkClient class to wrap any stream-based protocol (UDT, TCP, etc.) in an SSL stream.
+
+```java
+X509Certificate serverCertificate = ...;
+
+Socket clientSocket = new Socket();
+clientSocket.connect(...);
+
+NetworkClient dataLayer = new NativeSocketClient(clientSocket, true);
+NetworkClient ssl = SSL.wrapClient(dataLayer, serverCertificate);
+```
