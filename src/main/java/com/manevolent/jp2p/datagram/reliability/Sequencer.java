@@ -63,7 +63,10 @@ public class Sequencer<T> {
 
     private void setOffset(long offset) {
         synchronized (buffer) {
+
             this.offset = Math.max(0L, offset);
+            //if (offset > 0)
+            //throw new IllegalArgumentException();
         }
     }
 
@@ -94,7 +97,7 @@ public class Sequencer<T> {
     public T put(long i, T o) {
         synchronized (buffer) {
             long ri = i - offset;
-            if (ri < 0) throw new IllegalArgumentException("Sequence too small: " + i);
+            if (ri < 0) throw new IllegalArgumentException("Sequence too small: " + i + " < " + offset);
             if (ri >= buffer.length) throw new IllegalArgumentException("Sequence too large: " + i);
             if (o == null) throw new IllegalArgumentException("Cannot set value to null.");
             T old = buffer[(int) ri];
@@ -140,7 +143,8 @@ public class Sequencer<T> {
         synchronized (buffer) {
             long ri = i - offset;
             if (ri < 0) return null;
-            if (ri >= buffer.length) throw new IllegalArgumentException("Sequence too large: " + i);
+            if (ri >= buffer.length) throw new IllegalArgumentException("Sequence too large: " +
+                    ri + " >= " + buffer.length);
 
             return buffer[(int) ri];
         }
