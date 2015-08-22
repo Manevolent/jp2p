@@ -2,7 +2,6 @@ package com.manevolent.jp2p.discovery.bittorrent;
 
 import com.manevolent.jp2p.NetworkProtocol;
 import com.manevolent.jp2p.discovery.AsyncDiscovery;
-import com.manevolent.jp2p.extensible.endpoint.IpEndpoint;
 import com.turn.ttorrent.bcodec.BEValue;
 import com.turn.ttorrent.bcodec.BEncoder;
 import com.turn.ttorrent.client.SharedTorrent;
