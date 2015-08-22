@@ -82,7 +82,7 @@ while (jitterBuffer.has())
 
 ### Peer discovery
 
-JP2P exposes a peer discovery API that makes finding peers inside a network a standard feature of the API. The JAR comes bundled with ttorrent, a BitTorrent which extends a capability to find peers by using pre-generated torrents for the sole purpose of bootstrapping with other peers in the announcement list.
+JP2P exposes a peer discovery API that makes finding peers inside a network a standard feature of the API. The JAR comes bundled with ttorrent, a BitTorrent API which extends a capability to find peers by using pre-generated torrents for the sole purpose of bootstrapping with other peers in the announcement list.
 
 ```java
 BitTorrentDiscovery discovery = new BitTorrentDiscovery(
