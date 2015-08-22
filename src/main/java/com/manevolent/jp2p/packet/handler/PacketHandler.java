@@ -26,5 +26,4 @@ public abstract class PacketHandler<T extends IdentifiedPacket> {
      * @return true if the last ping was successful, false otherwise.
      */
     public abstract boolean ping();
-
 }
