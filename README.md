@@ -1,5 +1,5 @@
 # Java P2P
-This project aims to provide a P2P network protocol stack and API, implemented in pure Java for applications that want to utilize decentralized communications for purposes such as IM, signaling, low-latency media streams, server-free frameworks, and more. It comes bundled with barchart's UDT, along with a very basic low-latency UDP-based reliability protocol. Wrapping your communications with SSL is also supported. JP2P is designed to provide you with a layered network architecture, so you can easily stack protocols on top of eachother with only a few lines of code.
+This project aims to provide a thread-safe P2P network protocol stack and API, implemented in pure Java for applications that want to utilize decentralized communications for purposes such as IM, signaling, low-latency media streams, server-free frameworks, and more. It comes bundled with barchart's UDT, along with a very basic low-latency UDP-based reliability protocol. Wrapping your communications with SSL is also supported. JP2P is designed to provide you with a layered network architecture, so you can easily stack protocols on top of eachother with only a few lines of code.
 
 
 ### Protocol implementations
@@ -78,4 +78,38 @@ jitterBuffer.setMaximumDelay(1.0D);
 
 while (jitterBuffer.has())
   AudioFrame frame = jitterBuffer.get();
+```
+
+### Peer discovery
+
+JP2P exposes a peer discovery API that makes finding peers inside a network a standard feature of the API. The JAR comes bundled with ttorrent, a BitTorrent which extends a capability to find peers by using pre-generated torrents for the sole purpose of bootstrapping with other peers in the announcement list.
+
+```java
+BitTorrentDiscovery discovery = new BitTorrentDiscovery(
+    generateTorrent(identifier, trackers, currentTime),
+    NetworkProtocol.DATAGRAM,
+    new InetSocketAddress("localhost", 1337),
+    new AsyncDiscoveryCallback<BitTorrentEndpoint>() {
+        @Override
+        public void onDiscovered(BitTorrentEndpoint endpoint) {
+           String ip = endpoint.getPeer().getIp();
+        }
+    }
+);
+        
+discovery.setRunning(true);
+```
+
+### Packet handlers
+
+You can also construct your own custom packet handlers by extending the PacketHandler type in a class. Attaching this to a JP2P network client provides you with the ability to process and interpret incoming packets.
+
+```java
+public class CustomPacketHandler extends PacketHandler<BoundPacket> {
+    @Override
+    public void handlePacket(BoundPacket packet) throws PacketHandleException {
+        String username = packet.getProperty("username", String.class);
+        RenderedImage avatar = packet.getProperty("avatar", RenderedImage.class);
+    }
+}
 ```
